@@ -12,7 +12,7 @@ namespace Yabber
             Directory.CreateDirectory(targetDir);
             var xws = new XmlWriterSettings();
             xws.Indent = true;
-            var xw = XmlWriter.Create($"{targetDir}\\_yabber-bxf3.xml", xws);
+            var xw = XmlWriter.Create(Path.Combine(targetDir, "_yabber-bxf3.xml"), xws);
             xw.WriteStartElement("bxf3");
 
             xw.WriteElementString("bhd_filename", bhdName);
@@ -31,7 +31,7 @@ namespace Yabber
         {
             var bxf = new BXF3();
             var xml = new XmlDocument();
-            xml.Load($"{sourceDir}\\_yabber-bxf3.xml");
+            xml.Load(Path.Combine(sourceDir, "_yabber-bxf3.xml"));
 
             string bhdFilename = xml.SelectSingleNode("bxf3/bhd_filename").InnerText;
             string bdtFilename = xml.SelectSingleNode("bxf3/bdt_filename").InnerText;
@@ -42,9 +42,9 @@ namespace Yabber
 
             YBinder.ReadBinderFiles(bxf, xml.SelectSingleNode("bxf3/files"), sourceDir);
 
-            string bhdPath = $"{targetDir}\\{bhdFilename}";
+            string bhdPath = Path.Combine(targetDir, bhdFilename);
             YBUtil.Backup(bhdPath);
-            string bdtPath = $"{targetDir}\\{bdtFilename}";
+            string bdtPath = Path.Combine(targetDir, bdtFilename);
             YBUtil.Backup(bdtPath);
             bxf.Write(bhdPath, bdtPath);
         }

@@ -60,8 +60,12 @@ namespace Yabber
                 xw.WriteEndElement();
 
                 byte[] bytes = bnd.ReadFile(file);
-                string outPath = $@"{targetDir}\{Path.GetDirectoryName(path)}\{Path.GetFileNameWithoutExtension(path)}{suffix}{Path.GetExtension(path)}";
-                Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+                // Normalize Windows backslashes to Unix forward slashes
+                string normalizedPath = path.Replace('\\', '/');
+                string outPath = Path.Combine(targetDir, Path.GetDirectoryName(normalizedPath) ?? "", Path.GetFileNameWithoutExtension(normalizedPath) + suffix + Path.GetExtension(normalizedPath));
+                string outDir = Path.GetDirectoryName(outPath);
+                if (!string.IsNullOrWhiteSpace(outDir))
+                    Directory.CreateDirectory(outDir);
                 File.WriteAllBytes(outPath, bytes);
                 progress.Report((float)i / bnd.Files.Count);
             }

@@ -17,7 +17,7 @@ namespace Yabber
             Directory.CreateDirectory(targetDir);
             var xws = new XmlWriterSettings();
             xws.Indent = true;
-            var xw = XmlWriter.Create($"{targetDir}\\_yabber-tpf.xml", xws);
+            var xw = XmlWriter.Create(Path.Combine(targetDir, "_yabber-tpf.xml"), xws);
             xw.WriteStartElement("tpf");
 
             xw.WriteElementString("filename", sourceName);
@@ -46,7 +46,7 @@ namespace Yabber
                 }
                 xw.WriteEndElement();
 
-                File.WriteAllBytes($"{targetDir}\\{texture.Name}.dds", texture.Headerize());
+                File.WriteAllBytes(Path.Combine(targetDir, texture.Name + ".dds"), texture.Headerize());
                 progress.Report((float)i / tpf.Textures.Count);
             }
             xw.WriteEndElement();
@@ -59,10 +59,12 @@ namespace Yabber
         {
             TPF tpf = new TPF();
             XmlDocument xml = new XmlDocument();
-            xml.Load($"{sourceDir}\\_yabber-tpf.xml");
+            xml.Load(Path.Combine(sourceDir, "_yabber-tpf.xml"));
 
             string filename = xml.SelectSingleNode("tpf/filename").InnerText;
-            Enum.TryParse(xml.SelectSingleNode("tpf/compression")?.InnerText ?? "None", out tpf.Compression);
+            DCX.Type compression;
+            Enum.TryParse(xml.SelectSingleNode("tpf/compression")?.InnerText ?? "None", out compression);
+            tpf.Compression = compression;
             tpf.Encoding = Convert.ToByte(xml.SelectSingleNode("tpf/encoding").InnerText, 16);
             tpf.Flag2 = Convert.ToByte(xml.SelectSingleNode("tpf/flag2").InnerText, 16);
 
@@ -82,13 +84,13 @@ namespace Yabber
                         floatStruct.Values.Add(float.Parse(valueNode.InnerText));
                 }
 
-                byte[] bytes = File.ReadAllBytes($"{sourceDir}\\{name}.dds");
+                byte[] bytes = File.ReadAllBytes(Path.Combine(sourceDir, name + ".dds"));
                 var texture = new TPF.Texture(name, format, flags1, bytes);
                 texture.FloatStruct = floatStruct;
                 tpf.Textures.Add(texture);
             }
 
-            string outPath = $"{targetDir}\\{filename}";
+            string outPath = Path.Combine(targetDir, filename);
             YBUtil.Backup(outPath);
             tpf.Write(outPath);
         }

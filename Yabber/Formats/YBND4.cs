@@ -12,7 +12,7 @@ namespace Yabber
             Directory.CreateDirectory(targetDir);
             var xws = new XmlWriterSettings();
             xws.Indent = true;
-            var xw = XmlWriter.Create($"{targetDir}\\_yabber-bnd4.xml", xws);
+            var xw = XmlWriter.Create(Path.Combine(targetDir, "_yabber-bnd4.xml"), xws);
             xw.WriteStartElement("bnd4");
 
             xw.WriteElementString("filename", sourceName);
@@ -34,10 +34,12 @@ namespace Yabber
         {
             var bnd = new BND4();
             var xml = new XmlDocument();
-            xml.Load($"{sourceDir}\\_yabber-bnd4.xml");
+            xml.Load(Path.Combine(sourceDir, "_yabber-bnd4.xml"));
 
             string filename = xml.SelectSingleNode("bnd4/filename").InnerText;
-            Enum.TryParse(xml.SelectSingleNode("bnd4/compression")?.InnerText ?? "None", out bnd.Compression);
+            DCX.Type compression;
+            Enum.TryParse(xml.SelectSingleNode("bnd4/compression")?.InnerText ?? "None", out compression);
+            bnd.Compression = compression;
             bnd.Version = xml.SelectSingleNode("bnd4/version").InnerText;
             bnd.Format = (Binder.Format)Enum.Parse(typeof(Binder.Format), xml.SelectSingleNode("bnd4/format").InnerText);
             bnd.BigEndian = bool.Parse(xml.SelectSingleNode("bnd4/bigendian").InnerText);
@@ -48,7 +50,7 @@ namespace Yabber
             bnd.Unk05 = bool.Parse(xml.SelectSingleNode("bnd4/unk05").InnerText);
             YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd4/files"), sourceDir);
 
-            string outPath = $"{targetDir}\\{filename}";
+            string outPath = Path.Combine(targetDir, filename);
             YBUtil.Backup(outPath);
             bnd.Write(outPath);
         }

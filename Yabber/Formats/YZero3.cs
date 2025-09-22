@@ -9,8 +9,11 @@ namespace Yabber
         {
             foreach (Zero3.File file in z3.Files)
             {
-                string outPath = $@"{targetDir}\{file.Name.Replace('/', '\\')}";
-                Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+                string normalizedName = file.Name.Replace('\\', '/');
+                string outPath = Path.Combine(targetDir, normalizedName);
+                string outDir = Path.GetDirectoryName(outPath);
+                if (!string.IsNullOrWhiteSpace(outDir))
+                    Directory.CreateDirectory(outDir);
                 File.WriteAllBytes(outPath, file.Bytes);
             }
         }

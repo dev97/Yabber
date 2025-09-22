@@ -81,7 +81,7 @@ namespace Yabber
             string sourceDir = Path.GetDirectoryName(sourceFile);
             string outPath;
             if (sourceFile.EndsWith(".dcx"))
-                outPath = $"{sourceDir}\\{Path.GetFileNameWithoutExtension(sourceFile)}";
+                outPath = Path.Combine(sourceDir, Path.GetFileNameWithoutExtension(sourceFile));
             else
                 outPath = $"{sourceFile}.undcx";
 

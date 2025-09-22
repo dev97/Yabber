@@ -121,7 +121,7 @@ namespace Yabber
         {
             string sourceDir = Path.GetDirectoryName(sourceFile);
             string filename = Path.GetFileName(sourceFile);
-            string targetDir = $"{sourceDir}\\{filename.Replace('.', '-')}";
+            string targetDir = Path.Combine(sourceDir, filename.Replace('.', '-'));
             if (File.Exists(targetDir))
                 targetDir += "-ybr";
 
@@ -203,7 +203,7 @@ namespace Yabber
                 {
                     string bdtExtension = Path.GetExtension(filename).Replace("bhd", "bdt");
                     string bdtFilename = $"{Path.GetFileNameWithoutExtension(filename)}{bdtExtension}";
-                    string bdtPath = $"{sourceDir}\\{bdtFilename}";
+                    string bdtPath = Path.Combine(sourceDir, bdtFilename);
                     if (File.Exists(bdtPath))
                     {
                         Console.WriteLine($"Unpacking BXF3: {filename}...");
@@ -222,7 +222,7 @@ namespace Yabber
                 {
                     string bdtExtension = Path.GetExtension(filename).Replace("bhd", "bdt");
                     string bdtFilename = $"{Path.GetFileNameWithoutExtension(filename)}{bdtExtension}";
-                    string bdtPath = $"{sourceDir}\\{bdtFilename}";
+                    string bdtPath = Path.Combine(sourceDir, bdtFilename);
                     if (File.Exists(bdtPath))
                     {
                         Console.WriteLine($"Unpacking BXF4: {filename}...");
@@ -318,27 +318,27 @@ namespace Yabber
         {
             string sourceName = new DirectoryInfo(sourceDir).Name;
             string targetDir = new DirectoryInfo(sourceDir).Parent.FullName;
-            if (File.Exists($"{sourceDir}\\_yabber-bnd3.xml"))
+            if (File.Exists(Path.Combine(sourceDir, "_yabber-bnd3.xml")))
             {
                 Console.WriteLine($"Repacking BND3: {sourceName}...");
                 YBND3.Repack(sourceDir, targetDir);
             }
-            else if (File.Exists($"{sourceDir}\\_yabber-bnd4.xml"))
+            else if (File.Exists(Path.Combine(sourceDir, "_yabber-bnd4.xml")))
             {
                 Console.WriteLine($"Repacking BND4: {sourceName}...");
                 YBND4.Repack(sourceDir, targetDir);
             }
-            else if (File.Exists($"{sourceDir}\\_yabber-bxf3.xml"))
+            else if (File.Exists(Path.Combine(sourceDir, "_yabber-bxf3.xml")))
             {
                 Console.WriteLine($"Repacking BXF3: {sourceName}...");
                 YBXF3.Repack(sourceDir, targetDir);
             }
-            else if (File.Exists($"{sourceDir}\\_yabber-bxf4.xml"))
+            else if (File.Exists(Path.Combine(sourceDir, "_yabber-bxf4.xml")))
             {
                 Console.WriteLine($"Repacking BXF4: {sourceName}...");
                 YBXF4.Repack(sourceDir, targetDir);
             }
-            else if (File.Exists($"{sourceDir}\\_yabber-tpf.xml"))
+            else if (File.Exists(Path.Combine(sourceDir, "_yabber-tpf.xml")))
             {
                 Console.WriteLine($"Repacking TPF: {sourceName}...");
                 YTPF.Repack(sourceDir, targetDir);

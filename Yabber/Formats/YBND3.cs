@@ -12,7 +12,7 @@ namespace Yabber
             Directory.CreateDirectory(targetDir);
             var xws = new XmlWriterSettings();
             xws.Indent = true;
-            var xw = XmlWriter.Create($"{targetDir}\\_yabber-bnd3.xml", xws);
+            var xw = XmlWriter.Create(Path.Combine(targetDir, "_yabber-bnd3.xml"), xws);
             xw.WriteStartElement("bnd3");
 
             xw.WriteElementString("filename", sourceName);
@@ -32,7 +32,7 @@ namespace Yabber
         {
             var bnd = new BND3();
             var xml = new XmlDocument();
-            xml.Load($"{sourceDir}\\_yabber-bnd3.xml");
+            xml.Load(Path.Combine(sourceDir, "_yabber-bnd3.xml"));
 
             if (xml.SelectSingleNode("bnd3/filename") == null)
                 throw new FriendlyException("Missing filename tag.");
@@ -45,7 +45,12 @@ namespace Yabber
             string strBitBigEndian = xml.SelectSingleNode("bnd3/bitbigendian")?.InnerText ?? "False";
             string strUnk18 = xml.SelectSingleNode("bnd3/unk18")?.InnerText ?? "0x0";
 
-            if (!Enum.TryParse(strCompression, out bnd.Compression))
+            DCX.Type compression;
+            if (!Enum.TryParse(strCompression, out compression))
+                throw new FriendlyException($"Could not parse compression type: {strCompression}");
+            bnd.Compression = compression;
+
+            if (false)
                 throw new FriendlyException($"Could not parse compression type: {strCompression}");
 
             try
@@ -77,7 +82,7 @@ namespace Yabber
             if (xml.SelectSingleNode("bnd3/files") != null)
                 YBinder.ReadBinderFiles(bnd, xml.SelectSingleNode("bnd3/files"), sourceDir);
 
-            string outPath = $"{targetDir}\\{filename}";
+            string outPath = Path.Combine(targetDir, filename);
             YBUtil.Backup(outPath);
             bnd.Write(outPath);
         }
